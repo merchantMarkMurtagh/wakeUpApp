@@ -15,6 +15,7 @@
 		A5BCD5D91CF65C6B0097C084 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5BCD5D71CF65C6B0097C084 /* LaunchScreen.storyboard */; };
 		A5BCD5E41CF65C6B0097C084 /* WakeUpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BCD5E31CF65C6B0097C084 /* WakeUpTests.swift */; };
 		A5BCD5EF1CF65CFF0097C084 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BCD5EE1CF65CFF0097C084 /* MapKit.framework */; };
+		A5C9AEE31DE4F1090026759C /* DistanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C9AEE21DE4F1090026759C /* DistanceViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		A5BCD5E31CF65C6B0097C084 /* WakeUpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeUpTests.swift; sourceTree = "<group>"; };
 		A5BCD5E51CF65C6B0097C084 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A5BCD5EE1CF65CFF0097C084 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		A5C9AEE21DE4F1090026759C /* DistanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				A5BCD5D01CF65C6B0097C084 /* ViewController.swift */,
 				A5BCD5D21CF65C6B0097C084 /* Main.storyboard */,
 				A5778EC61CFF99080009EC5F /* LocationSearchTable.swift */,
+				A5C9AEE21DE4F1090026759C /* DistanceViewController.swift */,
 				A5BCD5D51CF65C6B0097C084 /* Assets.xcassets */,
 				A5BCD5D71CF65C6B0097C084 /* LaunchScreen.storyboard */,
 				A5BCD5DA1CF65C6B0097C084 /* Info.plist */,
@@ -214,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5778EC71CFF99080009EC5F /* LocationSearchTable.swift in Sources */,
+				A5C9AEE31DE4F1090026759C /* DistanceViewController.swift in Sources */,
 				A5BCD5D11CF65C6B0097C084 /* ViewController.swift in Sources */,
 				A5BCD5CF1CF65C6B0097C084 /* AppDelegate.swift in Sources */,
 			);
