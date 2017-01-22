@@ -48,13 +48,17 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     @IBAction func cancelSelection(_ sender: UIButton) {
         
-        
+        mapView.removeAnnotations(mapView.annotations)
+        cancelButton.isHidden=true
         printPin=nil
         selectedPin=nil
         selectDButton.isHidden=false
+        locationPicked=false
+        run()
         
     
     }
+    
     
 
     override func didReceiveMemoryWarning() {
@@ -92,10 +96,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             
             resultSearchController?.hidesNavigationBarDuringPresentation = false
             resultSearchController?.dimsBackgroundDuringPresentation = true
-            definesPresentationContext = true // problem
+            //definesPresentationContext = true
             
             locationSearchTable.mapView = mapView
             locationSearchTable.handleMapSearchDelegate = self
+            
             
             
         }
@@ -103,7 +108,19 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         else
         {
             
-            //cancelButton.isHidden=false
+            //direction
+            let directionRequest = MKDirectionsRequest()
+            directionRequest.source = sourceMapItem
+            directionRequest.destination = destinationMapItem
+            directionRequest.transportType = .Automobile
+            
+            
+            
+            
+            // Calculate the direction
+            let directions = MKDirections(request: directionRequest)
+            
+            cancelButton.isHidden=false
             
             self.locationManager.delegate=self
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -114,13 +131,14 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             self.navigationItem.setHidesBackButton(true, animated: true);
             let span = MKCoordinateSpanMake(0.05, 0.05) // RADIIUSSSSSSSSSSSS
             let region = MKCoordinateRegionMake((printPin?.coordinate)!, span)
-            mapView.setRegion(region, animated: true)
+           //mapView.setRegion(region, animated: true)
             
             locationPlacemark = CLLocation(latitude: (printPin?.coordinate.latitude)!, longitude: (printPin?.coordinate.longitude)!) // red pin
             let distanceInMeters = locationManager.location?.distance(from: locationPlacemark!)   // how far away blue dot from pin is.
             
             if(distanceInMeters!<(radiuz*1000))
             {
+                cancelButton.isHidden=true
                 mapView.removeAnnotations(mapView.annotations)
                 locationPicked=false
                 locationPlacemark=nil
@@ -138,6 +156,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 run()
                 
             }
+            
 
             
         }
@@ -212,7 +231,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             mapView.addAnnotation(annotation)
             let span = MKCoordinateSpanMake(0.005, 0.005) // RADIIUSSSSSSSSSSSS
             let region = MKCoordinateRegionMake(placemark.coordinate, span)
-            mapView.setRegion(region, animated: true)
+            //mapView.setRegion(region, animated: true)
             //print(placemark.coordinate)
 
         

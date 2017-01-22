@@ -29,7 +29,7 @@ class DistanceViewController: UIViewController {
     @IBAction func setVal(_ sender: UIButton) {
         radiuz = Double(labl.text!)!
         
-        print(radiuz)
+        //print(radiuz)
         sldr.isEnabled=false
         performSegue(withIdentifier: "backToMap", sender: radiuz)
         
