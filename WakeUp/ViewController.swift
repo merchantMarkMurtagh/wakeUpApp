@@ -16,6 +16,7 @@ protocol HandleMapSearch {
     func dropPinZoomIn(_ placemark:MKPlacemark)
 }
 
+@available(iOS 10.0, *)//!!!!! careful
 class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate  {
 
     @IBOutlet weak var selectDButton: UIButton!
@@ -38,6 +39,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapView.delegate=self
         locationManager.startUpdatingLocation()
         cancelButton.isHidden=true
         run()
@@ -49,6 +51,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     @IBAction func cancelSelection(_ sender: UIButton) {
         
         mapView.removeAnnotations(mapView.annotations)
+        mapView.removeOverlays(mapView.overlays)
         cancelButton.isHidden=true
         printPin=nil
         selectedPin=nil
@@ -76,7 +79,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             
             selectDButton.isHidden=false
             //cancelButton.isHidden=true
-            //mapView.removeAnnotations(mapView.annotations)
+            mapView.removeAnnotations(mapView.annotations)
             
             self.locationManager.delegate=self
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -107,19 +110,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             
         else
         {
+    
             
-            //direction
-            let directionRequest = MKDirectionsRequest()
-            directionRequest.source = sourceMapItem
-            directionRequest.destination = destinationMapItem
-            directionRequest.transportType = .Automobile
-            
-            
-            
-            
-            // Calculate the direction
-            let directions = MKDirections(request: directionRequest)
-            
+            // Calculate distance
             cancelButton.isHidden=false
             
             self.locationManager.delegate=self
@@ -129,12 +122,50 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             selectDButton.isHidden=true
             dropPinZoomInTwo(printPin!)
             self.navigationItem.setHidesBackButton(true, animated: true);
-            let span = MKCoordinateSpanMake(0.05, 0.05) // RADIIUSSSSSSSSSSSS
-            let region = MKCoordinateRegionMake((printPin?.coordinate)!, span)
+            
+   
            //mapView.setRegion(region, animated: true)
             
             locationPlacemark = CLLocation(latitude: (printPin?.coordinate.latitude)!, longitude: (printPin?.coordinate.longitude)!) // red pin
             let distanceInMeters = locationManager.location?.distance(from: locationPlacemark!)   // how far away blue dot from pin is.
+            
+            //direction
+            
+            let destinationAnnotation = MKPointAnnotation()
+            destinationAnnotation.coordinate = (printPin?.coordinate)!
+            
+            
+            let sourcePlacemark = MKPlacemark(coordinate: (locationManager.location?.coordinate)!)
+            let destinationMapItem = MKMapItem(placemark: printPin!)
+            let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
+
+            
+            let directionRequest = MKDirectionsRequest()
+            directionRequest.source = sourceMapItem
+            directionRequest.destination = destinationMapItem
+            directionRequest.transportType = .automobile
+            
+            let directions = MKDirections(request: directionRequest)
+            
+            directions.calculate {
+                (response, error) -> Void in
+                
+                guard let response = response else {
+                    if let error = error {
+                        print("Error: \(error)")
+                    }
+                    
+                    return
+                }
+                
+                let route = response.routes[0]
+                self.mapView.add((route.polyline), level: MKOverlayLevel.aboveRoads)
+                
+                let rect = route.polyline.boundingMapRect
+                self.mapView.setRegion(MKCoordinateRegionForMapRect(rect), animated: true)
+                
+            }
+
             
             if(distanceInMeters!<(radiuz*1000))
             {
@@ -161,6 +192,14 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             
         }
     }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(overlay: overlay)
+        renderer.strokeColor = UIColor.red
+        renderer.lineWidth = 4.0
+        return renderer
+    }
+
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     
@@ -242,6 +281,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
 
 
 
+
+
+@available(iOS 10.0, *)
 extension ViewController: HandleMapSearch {
     func dropPinZoomIn(_ placemark:MKPlacemark){
         
@@ -262,7 +304,7 @@ extension ViewController: HandleMapSearch {
         mapView.addAnnotation(annotation)
         let span = MKCoordinateSpanMake(0.05, 0.05) // RADIIUSSSSSSSSSSSS
         let region = MKCoordinateRegionMake(placemark.coordinate, span)
-        mapView.setRegion(region, animated: true)
+        //mapView.setRegion(region, animated: true)
         //print(placemark.coordinate)
         
         //make CLLocation out of placemark

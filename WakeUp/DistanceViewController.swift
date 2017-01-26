@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+@available(iOS 10.0, *)
 class DistanceViewController: UIViewController {
 
     var radiuz = 0.0
