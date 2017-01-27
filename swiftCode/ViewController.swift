@@ -37,8 +37,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var locationPicked = false
     var noRedPin=false
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        cancelButton.layer.cornerRadius = 5
+        cancelButton.layer.borderColor = UIColor.black.cgColor
+
         mapView.delegate=self
         locationManager.startUpdatingLocation()
         cancelButton.isHidden=true
@@ -54,8 +59,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     @IBAction func cancelSelection(_ sender: UIButton) {
         
-        mapView.removeAnnotations(mapView.annotations)
-        mapView.removeOverlays(mapView.overlays)
+        self.mapView.removeAnnotations(mapView.annotations)
+        self.mapView.removeOverlays(mapView.overlays)
         cancelButton.isHidden=true
         printPin=nil
         locationPlacemark=nil
@@ -63,8 +68,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         selectDButton.isHidden=false
         locationPicked=false
         run()
-        
-    
+   
     }
     
     
@@ -85,12 +89,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             selectDButton.isHidden=false
             //cancelButton.isHidden=true
             mapView.removeAnnotations(mapView.annotations)
-            
+            self.navigationController?.navigationBar.isHidden = false
             self.locationManager.delegate=self
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
             self.locationManager.startUpdatingLocation()
             self.mapView.showsUserLocation = true  // blue dot
-            
             let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
             resultSearchController = UISearchController(searchResultsController: locationSearchTable)
             resultSearchController?.searchResultsUpdater = locationSearchTable
@@ -108,41 +111,37 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             locationSearchTable.handleMapSearchDelegate = self
             
             
-            
         }
             
         else
         {
     
-            
             // Calculate distance
             cancelButton.isHidden=false
-            
+            self.navigationController?.navigationBar.isHidden = true
             self.locationManager.delegate=self
             self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            
+            
             self.locationManager.startUpdatingLocation()
+           
+            
+            
             self.mapView.showsUserLocation = true  // blue dot
             selectDButton.isHidden=true
             dropPinZoomInTwo(printPin!)
             self.navigationItem.setHidesBackButton(true, animated: true);
             
-   
-           
-            
+            //distance between them
+            self.locationManager.startUpdatingLocation()
             locationPlacemark = CLLocation(latitude: (printPin?.coordinate.latitude)!, longitude: (printPin?.coordinate.longitude)!) // red pin
-            let distanceInMeters = locationManager.location?.distance(from: locationPlacemark!)   // how far away blue dot from pin is.
-            
-            
+            let distanceInMeters = self.locationManager.location?.distance(from: locationPlacemark!)   // how far away blue dot from pin is.
+ 
             
             //radius
             self.mapView.add(MKCircle(center: (printPin?.coordinate)!, radius: radiuz*1000))
             
-            
-
-           
-            
             //direction
-            
             let destinationAnnotation = MKPointAnnotation()
             destinationAnnotation.coordinate = (printPin?.coordinate)!
             
@@ -171,9 +170,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 }
                 
                 let route = response.routes[0]
-                self.mapView.add((route.polyline), level: MKOverlayLevel.aboveRoads)
                 
-                let centre = CLLocationCoordinate2D(latitude: self.locationManager.location!.coordinate.latitude, longitude: self.locationManager.location!.coordinate.longitude) // actual longitude x latitude
+                if(distanceInMeters!>(self.radiuz*1000))
+                {
+                    self.mapView.add((route.polyline), level: MKOverlayLevel.aboveRoads)
+
+                }
+                                let centre = CLLocationCoordinate2D(latitude: self.locationManager.location!.coordinate.latitude, longitude: self.locationManager.location!.coordinate.longitude) // actual longitude x latitude
                 let region = MKCoordinateRegion(center: centre, span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)) // how zoomed in itll go
                 self.mapView.setRegion(region, animated: true) // zoom animation
                 
@@ -181,12 +184,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             }
             
             // within radius
+            
             if(distanceInMeters!<(radiuz*1000))
             {
                 cancelButton.isHidden=true
                 locationPlacemark=nil
-                mapView.removeAnnotations(mapView.annotations)
-                mapView.removeOverlays(mapView.overlays)
+                self.mapView.removeAnnotations(mapView.annotations)
+                self.mapView.removeOverlays(mapView.overlays)
                 locationPicked=false
                 locationPlacemark=nil
                 selectedDestination=nil
@@ -224,7 +228,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     
             let location = locations.last
-        
+            manager.requestAlwaysAuthorization()
 //            let centre = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude) // actual longitude x latitude
 //            let region = MKCoordinateRegion(center: centre, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)) // how zoomed in itll go
 //            //self.mapView.setRegion(region, animated: true) // zoom animation
