@@ -42,6 +42,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         mapView.delegate=self
         locationManager.startUpdatingLocation()
         cancelButton.isHidden=true
+        let centre = CLLocationCoordinate2D(latitude: self.locationManager.location!.coordinate.latitude, longitude: self.locationManager.location!.coordinate.longitude) // actual longitude x latitude
+        let region = MKCoordinateRegion(center: centre, span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)) // how zoomed in itll go
+        self.mapView.setRegion(region, animated: true) // zoom animation
+
         run()
         
         
@@ -54,6 +58,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         mapView.removeOverlays(mapView.overlays)
         cancelButton.isHidden=true
         printPin=nil
+        locationPlacemark=nil
         selectedPin=nil
         selectDButton.isHidden=false
         locationPicked=false
@@ -86,11 +91,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             self.locationManager.startUpdatingLocation()
             self.mapView.showsUserLocation = true  // blue dot
             
-            
             let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
             resultSearchController = UISearchController(searchResultsController: locationSearchTable)
             resultSearchController?.searchResultsUpdater = locationSearchTable
-            
             
             let searchBar = resultSearchController!.searchBar
             searchBar.sizeToFit()
@@ -124,10 +127,19 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             self.navigationItem.setHidesBackButton(true, animated: true);
             
    
-           //mapView.setRegion(region, animated: true)
+           
             
             locationPlacemark = CLLocation(latitude: (printPin?.coordinate.latitude)!, longitude: (printPin?.coordinate.longitude)!) // red pin
             let distanceInMeters = locationManager.location?.distance(from: locationPlacemark!)   // how far away blue dot from pin is.
+            
+            
+            
+            //radius
+            self.mapView.add(MKCircle(center: (printPin?.coordinate)!, radius: radiuz*1000))
+            
+            
+
+           
             
             //direction
             
@@ -161,16 +173,20 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 let route = response.routes[0]
                 self.mapView.add((route.polyline), level: MKOverlayLevel.aboveRoads)
                 
-                let rect = route.polyline.boundingMapRect
-                self.mapView.setRegion(MKCoordinateRegionForMapRect(rect), animated: true)
+                let centre = CLLocationCoordinate2D(latitude: self.locationManager.location!.coordinate.latitude, longitude: self.locationManager.location!.coordinate.longitude) // actual longitude x latitude
+                let region = MKCoordinateRegion(center: centre, span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)) // how zoomed in itll go
+                self.mapView.setRegion(region, animated: true) // zoom animation
+                
                 
             }
-
             
+            // within radius
             if(distanceInMeters!<(radiuz*1000))
             {
                 cancelButton.isHidden=true
+                locationPlacemark=nil
                 mapView.removeAnnotations(mapView.annotations)
+                mapView.removeOverlays(mapView.overlays)
                 locationPicked=false
                 locationPlacemark=nil
                 selectedDestination=nil
@@ -182,37 +198,39 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 
                 // to play sound
                 AudioServicesPlaySystemSound (systemSoundID)
-                
                 self.present(alertController, animated: true, completion: nil)
                 run()
                 
             }
-            
-
-            
         }
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         let renderer = MKPolylineRenderer(overlay: overlay)
-        renderer.strokeColor = UIColor.red
+        renderer.strokeColor = UIColor.orange
         renderer.lineWidth = 4.0
+        
+        if let overlay = overlay as? MKCircle {
+            let circleRenderer = MKCircleRenderer(circle: overlay)
+            circleRenderer.strokeColor = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.35)
+            return circleRenderer
+        }
         return renderer
+        
+        
     }
-
+    
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     
-        
             let location = locations.last
-            let centre = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude) // actual longitude x latitude
-            let region = MKCoordinateRegion(center: centre, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)) // how zoomed in itll go
-            self.mapView.setRegion(region, animated: true) // zoom animation
+        
+//            let centre = CLLocationCoordinate2D(latitude: location!.coordinate.latitude, longitude: location!.coordinate.longitude) // actual longitude x latitude
+//            let region = MKCoordinateRegion(center: centre, span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)) // how zoomed in itll go
+//            //self.mapView.setRegion(region, animated: true) // zoom animation
+        
             location2 = location // blue dot, users current location
-            
-
-        
-        
+ 
         
     }
     
@@ -220,14 +238,13 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         if (locationPlacemark != nil)
         {
-            
             selectedDestination=locationPlacemark
             printPin=selectedPin
             performSegue(withIdentifier: "pickRadius", sender: radiuz)
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {//
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if(segue.identifier=="pickRadius")
         {
@@ -270,10 +287,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             mapView.addAnnotation(annotation)
             let span = MKCoordinateSpanMake(0.005, 0.005) // RADIIUSSSSSSSSSSSS
             let region = MKCoordinateRegionMake(placemark.coordinate, span)
-            //mapView.setRegion(region, animated: true)
+        
             //print(placemark.coordinate)
 
-        
         
     }
 
@@ -310,7 +326,7 @@ extension ViewController: HandleMapSearch {
         //make CLLocation out of placemark
        
         locationPlacemark = CLLocation(latitude: placemark.coordinate.latitude, longitude: placemark.coordinate.longitude) // red pin
-       
+        mapView.setRegion(region, animated: true)
         
        
     }

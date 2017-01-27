@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WakeUp/ViewController.swift"
-            timestampString = "506993543.983602"
+            timestampString = "507172640.085659"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
             landmarkName = "dropPinZoomIn(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,13 +26,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WakeUp/ViewController.swift"
-            timestampString = "506993543.983602"
+            timestampString = "507172640.085659"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "320"
-            endingLineNumber = "320"
-            landmarkName = "dropPinZoomIn(_:)"
-            landmarkType = "7">
+            startingLineNumber = "336"
+            endingLineNumber = "336"
+            landmarkName = "ViewController"
+            landmarkType = "4">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WakeUp/ViewController.swift"
-            timestampString = "506993543.983602"
+            timestampString = "507172640.085659"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
             landmarkName = "run()"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WakeUp/ViewController.swift"
-            timestampString = "506993543.983602"
+            timestampString = "507172640.085659"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "run()"
             landmarkType = "7">
             <Locations>
@@ -113,6 +113,22 @@
                   offsetFromSymbolStart = "7904">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WakeUp/ViewController.swift"
+            timestampString = "507172640.085659"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "run()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
